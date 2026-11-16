@@ -17,12 +17,12 @@ internal class RatesDetailUiStateConverter {
         val content = when (val history = state.history) {
             is Resource.Loading -> Content.Loading
             is Resource.Error -> Content.Error
-            is Resource.Data -> createContent(history.value)
+            is Resource.Data -> createContent(history.value, state.base, state.code)
         }
         return RatesDetailUiState(title = Strings.detailTitle(state.base, state.code), content = content)
     }
 
-    private fun createContent(history: List<DatedRate>): Content {
+    private fun createContent(history: List<DatedRate>, base: String, code: String): Content {
         val ordered = history.sortedByDescending(DatedRate::date)
         val latest = ordered.firstOrNull() ?: return Content.Empty
         val change = if (ordered.size >= 2) {
@@ -30,12 +30,22 @@ internal class RatesDetailUiStateConverter {
         } else {
             null
         }
+        val absoluteChange = change?.absolute?.let(NumberFormatter::formatSignedRate)
+        val trend = when {
+            absoluteChange?.startsWith("+") == true -> RatesDetailUiState.Trend.Up
+            absoluteChange?.startsWith("-") == true -> RatesDetailUiState.Trend.Down
+            else -> RatesDetailUiState.Trend.Flat
+        }
         return Content.History(
+            base = base,
+            code = code,
             latest = NumberFormatter.formatRate(latest.rate),
             latestDate = latest.date.toString(),
-            absoluteChange = change?.absolute?.let(NumberFormatter::formatSignedRate),
+            comparisonDate = ordered.last().date.toString().takeIf { ordered.size >= 2 },
+            absoluteChange = absoluteChange,
             percentChange = change?.percent?.let(NumberFormatter::formatSignedPercent),
             items = ordered.map { rate -> HistoryItem(rate.date.toString(), NumberFormatter.formatRate(rate.rate)) },
+            trend = trend,
         )
     }
 

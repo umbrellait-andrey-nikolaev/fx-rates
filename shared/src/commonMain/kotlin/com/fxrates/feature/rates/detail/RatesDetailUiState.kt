@@ -17,13 +17,19 @@ internal data class RatesDetailUiState(
         data object Error : Content()
         data object Empty : Content()
         data class History(
+            val base: String,
+            val code: String,
             val latest: String,
             val latestDate: String,
+            val comparisonDate: String?,
             val absoluteChange: String?,
             val percentChange: String?,
             val items: List<HistoryItem>,
+            val trend: Trend = Trend.Flat,
         ) : Content()
 
     }
+
+    enum class Trend { Up, Down, Flat }
 
 }

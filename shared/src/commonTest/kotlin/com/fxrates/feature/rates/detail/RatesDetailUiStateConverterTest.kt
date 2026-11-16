@@ -21,8 +21,11 @@ class RatesDetailUiStateConverterTest : FunSpec({
         val content = ui.content.shouldBeInstanceOf<Content.History>()
 
         ui.title shouldBe "1 USD in EUR"
+        content.base shouldBe "USD"
+        content.code shouldBe "EUR"
         content.latest shouldBe "1.2500"
         content.latestDate shouldBe "2026-11-03"
+        content.comparisonDate shouldBe "2026-11-01"
         content.items.map { item -> item.date } shouldBe listOf("2026-11-03", "2026-11-02", "2026-11-01")
         content.absoluteChange shouldBe "+0.2500"
         content.percentChange shouldBe "+25.00%"
@@ -38,6 +41,7 @@ class RatesDetailUiStateConverterTest : FunSpec({
     test("a single observation has no period change") {
         val content = converter.createUiState(state(rate(1, "1.25"))).content.shouldBeInstanceOf<Content.History>()
         content.latestDate shouldBe "2026-11-01"
+        content.comparisonDate shouldBe null
         content.absoluteChange shouldBe null
         content.percentChange shouldBe null
     }
@@ -45,6 +49,7 @@ class RatesDetailUiStateConverterTest : FunSpec({
     test("a zero starting rate keeps the absolute change and leaves percent unavailable") {
         val content = converter.createUiState(state(rate(1, "0"), rate(2, "1")))
             .content.shouldBeInstanceOf<Content.History>()
+        content.comparisonDate shouldBe "2026-11-01"
         content.absoluteChange shouldBe "+1.0000"
         content.percentChange shouldBe null
     }

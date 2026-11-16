@@ -58,7 +58,7 @@ private fun RatesDetailUiContent(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s),
                 ) {
-                    Text(Strings.ERROR_TITLE)
+                    Text(Strings.DETAIL_ERROR, style = MaterialTheme.typography.bodyLarge)
                     Button(onClick = onRetry) { Text(Strings.RETRY) }
                 }
             }
@@ -75,13 +75,48 @@ private fun RatesDetailUiContent(
 @Composable
 private fun HistoryContent(content: Content.History) = LazyColumn(modifier = Modifier.fillMaxSize()) {
     item {
-        Column(modifier = Modifier.fillMaxWidth().padding(AppTheme.spacing.m)) {
-            Text(content.latest, style = MaterialTheme.typography.headlineMedium)
-            Text(content.latestDate, color = AppTheme.colors.neutral)
-            Text(Strings.DETAIL_CHANGE, style = MaterialTheme.typography.titleMedium)
-            Text(content.absoluteChange ?: Strings.DETAIL_UNAVAILABLE)
-            Text(content.percentChange ?: Strings.DETAIL_UNAVAILABLE)
-            Text(Strings.DETAIL_HISTORY, style = MaterialTheme.typography.titleMedium)
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(AppTheme.spacing.m),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.l),
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
+                Text(
+                    Strings.detailRate(content.base, content.latest, content.code),
+                    style = MaterialTheme.typography.headlineMedium,
+                )
+                Text(Strings.detailAsOf(content.latestDate), style = MaterialTheme.typography.bodyMedium)
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
+                Text(Strings.DETAIL_CHANGE, style = MaterialTheme.typography.titleMedium)
+                if (content.comparisonDate == null) {
+                    Text(Strings.DETAIL_NEED_OBSERVATIONS, style = MaterialTheme.typography.bodyMedium)
+                } else {
+                    Text(
+                        Strings.detailPeriod(content.comparisonDate, content.latestDate),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    Text(
+                        Strings.detailChange(content.absoluteChange.orEmpty(), content.code),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = content.trend.color(),
+                    )
+                    Text(
+                        content.percentChange ?: Strings.DETAIL_PERCENT_UNAVAILABLE,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.s)) {
+                Text(Strings.DETAIL_HISTORY, style = MaterialTheme.typography.titleMedium)
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        Strings.DETAIL_DATE,
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                    Text(Strings.DETAIL_RATE, style = MaterialTheme.typography.labelMedium)
+                }
+            }
         }
     }
     items(items = content.items, key = HistoryItem::date) { item ->
@@ -94,6 +129,13 @@ private fun HistoryContent(content: Content.History) = LazyColumn(modifier = Mod
         }
         HorizontalDivider()
     }
+}
+
+@Composable
+private fun RatesDetailUiState.Trend.color() = when (this) {
+    RatesDetailUiState.Trend.Up -> AppTheme.colors.positive
+    RatesDetailUiState.Trend.Down -> AppTheme.colors.negative
+    RatesDetailUiState.Trend.Flat -> MaterialTheme.colorScheme.onSurface
 }
 
 @Composable
