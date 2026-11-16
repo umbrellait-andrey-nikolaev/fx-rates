@@ -2,7 +2,7 @@ package com.fxrates.data.repository
 
 import com.fxrates.data.remote.dto.TimeSeriesDto
 import com.fxrates.domain.model.CurrencyRate
-import com.ionspin.kotlin.bignum.decimal.BigDecimal
+import com.fxrates.domain.model.DatedRate
 import com.ionspin.kotlin.bignum.decimal.toBigDecimal
 import kotlinx.datetime.LocalDate
 import me.tatarka.inject.annotations.Inject
@@ -25,15 +25,17 @@ class RatesConverter {
                     code = code,
                     name = currencies[code] ?: code,
                     date = LocalDate.parse(latestDate),
-                    rate = rate.toDecimal(),
-                    previousRate = previous[code]?.toDecimal(),
+                    rate = rate.content.toBigDecimal(),
+                    previousRate = previous[code]?.content?.toBigDecimal(),
                 )
             }
             .sortedBy(CurrencyRate::code)
     }
 
-    // Going through the string keeps the decimal digits the API sent: 0.89158 stays 0.89158
-    // instead of the nearest binary double.
-    private fun Double.toDecimal(): BigDecimal = toString().toBigDecimal()
+    fun toRateHistory(timeSeries: TimeSeriesDto, code: String): List<DatedRate> {
+        return timeSeries.rates.mapNotNull { (date, rates) ->
+            rates[code]?.let { rate -> DatedRate(date = LocalDate.parse(date), rate = rate.content.toBigDecimal()) }
+        }.sortedByDescending(DatedRate::date)
+    }
 
 }

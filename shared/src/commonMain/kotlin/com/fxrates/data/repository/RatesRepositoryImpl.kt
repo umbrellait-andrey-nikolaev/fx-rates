@@ -2,6 +2,7 @@ package com.fxrates.data.repository
 
 import com.fxrates.data.remote.FrankfurterApi
 import com.fxrates.domain.model.CurrencyRate
+import com.fxrates.domain.model.DatedRate
 import com.fxrates.domain.repository.RatesRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -27,9 +28,16 @@ class RatesRepositoryImpl(
         converter.toLatestRates(timeSeries = timeSeries.await(), currencies = currencies.await())
     }
 
+    override suspend fun getRateHistory(base: String, code: String): List<DatedRate> {
+        val end = clock.todayIn(TimeZone.UTC)
+        val start = end.minus(DatePeriod(days = HISTORY_LOOKBACK_DAYS))
+        return converter.toRateHistory(api.getTimeSeries(base = base, start = start, end = end), code)
+    }
+
     private companion object {
 
         const val LOOKBACK_DAYS = 7
+        const val HISTORY_LOOKBACK_DAYS = 29
 
     }
 

@@ -8,6 +8,7 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.json.JsonPrimitive
 
 class RatesConverterTest : FunSpec({
 
@@ -19,9 +20,9 @@ class RatesConverterTest : FunSpec({
             startDate = "2026-10-29",
             endDate = "2026-11-02",
             rates = mapOf(
-                "2026-11-02" to mapOf("EUR" to 0.89158),
-                "2026-10-29" to mapOf("EUR" to 0.89847),
-                "2026-10-30" to mapOf("EUR" to 0.89509),
+                "2026-11-02" to mapOf("EUR" to JsonPrimitive(0.89158)),
+                "2026-10-29" to mapOf("EUR" to JsonPrimitive(0.89847)),
+                "2026-10-30" to mapOf("EUR" to JsonPrimitive(0.89509)),
             ),
         )
 
@@ -42,7 +43,7 @@ class RatesConverterTest : FunSpec({
             base = "USD",
             startDate = "2026-11-02",
             endDate = "2026-11-02",
-            rates = mapOf("2026-11-02" to mapOf("XAU" to 0.0003)),
+            rates = mapOf("2026-11-02" to mapOf("XAU" to JsonPrimitive(0.0003))),
         )
 
         val rate = converter.toLatestRates(timeSeries, currencies = emptyMap()).single()
@@ -56,12 +57,12 @@ class RatesConverterTest : FunSpec({
             base = "USD",
             startDate = "2026-11-02",
             endDate = "2026-11-02",
-            rates = mapOf("2026-11-02" to mapOf("JPY" to 157.9, "CHF" to 0.8, "EUR" to 0.89)),
+            rates = mapOf("2026-11-02" to mapOf("JPY" to JsonPrimitive(157.9), "CHF" to JsonPrimitive(0.8))),
         )
 
         val codes = converter.toLatestRates(timeSeries, currencies = emptyMap()).map(CurrencyRate::code)
 
-        codes shouldBe listOf("CHF", "EUR", "JPY")
+        codes shouldBe listOf("CHF", "JPY")
     }
 
     test("an empty time series gives no rates") {
