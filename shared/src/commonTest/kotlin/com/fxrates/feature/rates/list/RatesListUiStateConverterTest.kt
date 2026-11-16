@@ -39,6 +39,20 @@ class RatesListUiStateConverterTest : FunSpec({
         items[0].change?.shouldStartWith("+")
         items[1].change?.shouldStartWith("-")
         items[2].change shouldBe null
+        items[0].change shouldBe "+1.14%"
+    }
+
+    test("a zero previous rate has no percentage while a zero current rate shows a loss") {
+        val values = listOf(
+            currencyRate(code = "EUR", name = "Euro", rate = "1", previousRate = "0"),
+            currencyRate(code = "JPY", name = "Yen", rate = "0", previousRate = "1"),
+        )
+        val items = converter.createUiState(
+            RatesListStore.State(base = "USD", rates = Resource.Data(values)),
+        ).content.shouldBeInstanceOf<Content.Items>().items
+
+        items[0].change shouldBe null
+        items[1].change shouldBe "-100.00%"
     }
 
     test("the query filters by code and by name, ignoring case") {
