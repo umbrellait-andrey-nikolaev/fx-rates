@@ -12,6 +12,13 @@ object Strings {
     const val ERROR_TITLE = "Could not load the rates"
     const val RETRY = "Retry"
     const val REFRESH = "Refresh"
+    const val BACK = "Back"
+    const val DETAIL_EMPTY = "No rates available for this period"
+    const val DETAIL_HISTORY = "Last 30 days"
+    const val DETAIL_CHANGE = "Change over period"
+    const val DETAIL_UNAVAILABLE = "Unavailable"
+
+    fun detailTitle(base: String, code: String): String = "1 $base in $code"
 
     fun ratesSubtitle(base: String, date: String): String = "1 $base · $date"
 
