@@ -3,6 +3,10 @@
 A small Kotlin Multiplatform app showing ECB currency rates from the
 [Frankfurter API](https://frankfurter.dev).
 
+Select a currency to see its latest available dated rate and business-day history for the last
+30 UTC calendar days. The detail screen shows the change between the earliest and latest available
+rates, supports retry on errors, and returns to the rates list.
+
 ## Requirements
 
 - JDK 21
