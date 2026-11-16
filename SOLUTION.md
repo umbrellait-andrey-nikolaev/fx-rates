@@ -1,10 +1,8 @@
 # Solution notes
 
 - **AI tools and models:** Codex with GPT-6.1 Sol for inspection and analysis, GPT-6.1 Terra for
-  planning and implementation, and GPT-6 in this session.
-- **Context:** The agent used `AGENTS.md`, the linked architecture, screen, conventions and
-  commands documents, the existing `RatesList` screen, and the assignment and implementation plan.
-- **Errors and checks:** The first detail-screen check reported two overlong lines from the agent's
-  changes. Detekt identified them; the agent corrected them and reran the checks successfully.
-  The completed screen was also checked on an Android phone, including retry and both back paths.
-- **Manual code changes:** None, according to the author.
+  planning and implementation.
+- **Context acquiring:** The agent used ai-factory approach to get the context and later to go through plan/implementation loop. In exploration phase it used `AGENTS.md`, the linked architecture, screen, conventions and
+  commands documents, the existing `RatesList` screen, and the assignment text.
+- **AI errors and checks:** No critical issues in code after human review, everything was fixed in automatic phase. The first iteration of design was quite sloppy though, I used impeccable to make it a bit better after the implementation.
+- **Manual code changes:** None. Everything was AI-generated and reviewed by me
