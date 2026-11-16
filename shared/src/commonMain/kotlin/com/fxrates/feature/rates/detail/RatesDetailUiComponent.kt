@@ -41,12 +41,16 @@ internal class RatesDetailUiComponentDefault(
 
     @AssistedFactory
     interface Factory {
+
         fun create(componentContext: ComponentContext, base: String, code: String, callbacks: Callbacks):
             RatesDetailUiComponentDefault
+
     }
 
     interface Callbacks {
+
         fun onBack()
+
     }
 
     private val scope = coroutineScope()

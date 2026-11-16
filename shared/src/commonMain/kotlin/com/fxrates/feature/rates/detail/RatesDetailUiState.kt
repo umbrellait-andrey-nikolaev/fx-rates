@@ -12,6 +12,7 @@ internal data class RatesDetailUiState(
 
     @Immutable
     sealed class Content {
+
         data object Loading : Content()
         data object Error : Content()
         data object Empty : Content()
@@ -22,6 +23,7 @@ internal data class RatesDetailUiState(
             val percentChange: String?,
             val items: List<HistoryItem>,
         ) : Content()
+
     }
 
 }
